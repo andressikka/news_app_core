@@ -1,0 +1,26 @@
+CREATE DATABASE newsapp;
+use newsapp;
+
+create table admin (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username varchar(255) NOT NULL,
+    password longtext NOT NULL,
+    created_at datetime,
+    updated_at datetime,
+    CONSTRAINT unique_fields UNIQUE (username)
+);
+
+CREATE TABLE news (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title longtext,
+    body longtext,
+    article_visibility boolean,
+    picture longtext,
+    picture_visibility boolean,
+    created_at datetime,
+    updated_at datetime,
+    adminId int,
+    last_adminId int,
+    FOREIGN KEY (adminId) REFERENCES admin (Id),
+    FOREIGN KEY (last_adminId) REFERENCES admin (Id)
+);
