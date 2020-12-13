@@ -8,7 +8,7 @@
 ?>
 <body class="bg-light">
 <?php require_once("viewparts/nav.php");?>
-    
+<?php require_once("../index.php"); ?>
 </body>
 </html>
 

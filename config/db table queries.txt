@@ -2,12 +2,17 @@ CREATE DATABASE newsapp;
 use newsapp;
 
 create table admin (
-    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     username varchar(255) NOT NULL,
     password longtext NOT NULL,
     created_at datetime,
     updated_at datetime,
     CONSTRAINT unique_fields UNIQUE (username)
+);
+
+CREATE TABLE category (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    category varchar(255)
 );
 
 CREATE TABLE news (
@@ -17,10 +22,12 @@ CREATE TABLE news (
     article_visibility boolean,
     picture longtext,
     picture_visibility boolean,
+    categoryId int,
     created_at datetime,
     updated_at datetime,
     adminId int,
     last_adminId int,
     FOREIGN KEY (adminId) REFERENCES admin (Id),
-    FOREIGN KEY (last_adminId) REFERENCES admin (Id)
+    FOREIGN KEY (last_adminId) REFERENCES admin (Id),
+    FOREIGN KEY (categoryId) REFERENCES category (Id)
 );

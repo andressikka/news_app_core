@@ -5,6 +5,9 @@ if(!isset($_SESSION['username'])){
 }
 
 require_once("../config/config.php");
+/**
+ * @var mysqli $conn
+ */
 if(isset($_POST["delete_article"])){
     $sql = "DELETE FROM news WHERE id=?";
     $stmt = $conn->prepare($sql);
@@ -22,7 +25,7 @@ if(isset($_POST["delete_article"])){
 
 }
 
-$sql = "SELECT id, title FROM news ORDER BY id DESC";
+$sql = "SELECT id, title, body, article_visibility, picture_visibility FROM news ORDER BY id DESC";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -38,7 +41,16 @@ $result = $stmt->get_result();
         <div class="row justify-content-center">
             <div class="col-10 list-group-item"><h4><?= $row['title'] ?></h4></div>
             <div class="col-1 list-group-item">
-                <a class="btn btn-primary" href="edit.php/?mark=edit&?id=<?= $row['id'] ?>">Edit</a>
+                <form action="edit.php?mark=edit&id=<?= $row['id'] ?>" method="POST">
+                    <!-- <input type="hidden" name="mark" value="edit"> -->
+                    <input type="hidden" name="title" value="<?= $row['title'] ?>">
+                    <input type="hidden" name="body" value="<?= $row['body'] ?>">
+                    <input type="hidden" name="article_visibility" value="<?= $row['article_visibility'] ?>">
+                    <input type="hidden" name="picture_visibility" value="<?= $row['picture_visibility'] ?>">
+                    <input class="btn btn-primary" type="submit" value="Edit">
+
+                </form>
+                <!-- <a class="btn btn-primary" href="edit.php?mark=edit&id=<?= $row['id'] ?>">Edit</a> -->
             </div>
             <div class="col-1 list-group-item">
                 <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">

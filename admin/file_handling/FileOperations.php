@@ -1,5 +1,5 @@
 <?php
-namespace admin\file_handling;
+namespace admin\file_handling\FileOperations;
 
 class FileOperations{
 
@@ -26,6 +26,14 @@ class FileOperations{
             $pictureName = basename($this->file["name"]);
             $pictureType = strtolower(pathinfo($pictureName, PATHINFO_EXTENSION));
             if(in_array($pictureType, $this->allowedTypesOfPictures)){
+                if($last_id != ""){
+                    $files = glob("upload/" . $last_id . "/*");
+                    foreach($files as $file){
+                        if(is_file($file)){
+                            unlink($file);
+                        }
+                    }
+                }
                 move_uploaded_file($this->file["tmp_name"], $this->path . $last_id . "/" . $pictureName);
             }
         }
