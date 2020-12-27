@@ -1,4 +1,6 @@
 <?php
+    use admin\DatabaseClass\DatabaseClass as DatabaseClass;
+    
     if(isset($_POST["aLogin"])){
         $aLogin = $_POST["aLogin"];
     }
@@ -15,14 +17,14 @@
 //    }
 
     if(isset($_POST["submitF"])){
-        require_once("../config/config.php");
-        /**
-         * @var mysqli $conn
-         */
+        require_once(dirname(__FILE__)."/DBQueries/DatabaseClass.php");
+
         $sql = "INSERT INTO admin (username, password) VALUES (?,?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ss", $aLogin, $aPassword1);
-        $stmt->execute();
+        $db = new DatabaseClass("localhost", "root", "root", "newsapp");
+        $bind_params = ["ss", $aLogin, $aPassword1];
+        $db->insert($sql,$bind_params);
+
+
     }
 
 

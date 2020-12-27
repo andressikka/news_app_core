@@ -1,6 +1,8 @@
 <?php 
 session_start();
+require_once(dirname(__FILE__)."/DBQueries/DatabaseClass.php");
 use admin\file_handling\FileOperations\FileOperations as FileOperations;
+use admin\DatabaseClass\DatabaseClass as DatabaseClass;
 
 include_once("file_handling/FileOperations.php");
 // echo session_id();
@@ -21,7 +23,7 @@ $date = date('Y-m-d H:i:s');
 
 
 if(isset($_POST['article_upload'])){
-    require_once("../config/config.php");
+    require_once(dirname(__FILE__)."/../config/config.php");
     /**
      * @var mysqli $conn
      */
@@ -34,30 +36,26 @@ if(isset($_POST['article_upload'])){
     if(!empty($_FILES["picture"]["name"])){
         $picture_existance = 1;
         $FileOperations = new FileOperations("upload/",$_FILES["picture"], Array("jpg", "jpeg", "png"));
-        $containment = "upload/";
         $fileName = $FileOperations->getFileName();
         $image_file_type = $FileOperations->imageFileType();
         $allowedTypes = $FileOperations->getAllowedTypesOfPictures();
+        $db = new DatabaseClass("localhost", "root", "root", "newsapp");
     
         if(in_array($image_file_type, $allowedTypes)){
             $sql = "INSERT INTO news (title, body, created_at, article_visibility, picture, picture_visibility, categoryId, adminId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssisisi", $title, $body, $date, $article_hide, $fileName, $picture_existance, $categoryId, $s);
-            $stmt->execute();
-            $last_id = mysqli_insert_id($conn);
+            $bind_params = Array("sssisiii", $title, $body, $date, $article_hide, $fileName, $picture_existance, $categoryId, $s);
+            $last_id = $db->insert($sql, $bind_params);
             mkdir("upload/" . $last_id);
-            $conn->close();
+
     
             $FileOperations->savePicture($last_id);
         }
     } else {
         $sql = "INSERT INTO news (title, body, created_at, article_visibility, picture, categoryId, adminId) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssissi", $title, $body, $date, $article_hide, $fileName, $categoryId, $s);
-            $stmt->execute();
-            $last_id = mysqli_insert_id($conn);
-            mkdir("upload/" . $last_id);
-            $conn->close();
+        $fileName = null;
+        $bind_params = Array("sssisii", $title, $body, $date, $article_hide, $fileName, $categoryId, $s);
+        $last_id = $db->insert($sql, $bind_params);
+        mkdir("upload/" . $last_id);
     }
     
     

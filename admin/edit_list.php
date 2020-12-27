@@ -4,16 +4,14 @@ if(!isset($_SESSION['username'])){
     header("Location:login.php");
 }
 
-require_once("../config/config.php");
-/**
- * @var mysqli $conn
- */
+require_once(dirname(__FILE__)."/DBQueries/DatabaseClass.php");
+use admin\DatabaseClass\DatabaseClass as DatabaseClass;
+
 if(isset($_POST["delete_article"])){
     $sql = "DELETE FROM news WHERE id=?";
-    $stmt = $conn->prepare($sql);
+    $db = new DatabaseClass("localhost", "root", "root", "newsapp");
     $id = $_POST["id"];
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
+    $db->remove($sql, ["i", $id]);
 
     $files = glob("upload/" . $id . "/*");
     foreach($files as $file){
@@ -24,11 +22,9 @@ if(isset($_POST["delete_article"])){
     rmdir("upload/" . $id);
 
 }
-
+$db = new DatabaseClass("localhost", "root", "root", "newsapp");
 $sql = "SELECT id, title, body, article_visibility, picture_visibility FROM news ORDER BY id DESC";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $db->select($sql);
 
 ?>
 
@@ -36,8 +32,13 @@ $result = $stmt->get_result();
 <?php require_once("./viewparts/head.php"); ?>
 <body class="bg-light">
 <?php require_once("viewparts/nav.php");?>
+
+<div class="container ml-1">
+    <!-- TO DO add filters to article observation -->
+</div>
+
 <div class="container pt-5">
-    <?php while($row = $result->fetch_assoc()){ ?>
+    <?php foreach($result as $row){ ?>
         <div class="row justify-content-center">
             <div class="col-10 list-group-item"><h4><?= $row['title'] ?></h4></div>
             <div class="col-1 list-group-item">
@@ -59,5 +60,5 @@ $result = $stmt->get_result();
                 </form>
             </div>
         </div>
-    <?php } $conn->close();?>
+    <?php } ?>
 </div>

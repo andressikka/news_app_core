@@ -3,41 +3,31 @@ session_start();
 if(isset($_SESSION['username'])){
     header('Location: adminView.php');
 }
+require_once(dirname(__FILE__)."/DBQueries/DatabaseClass.php");
+use admin\DatabaseClass\DatabaseClass as DatabaseClass;
 // echo session_id();
 $msg = "";
 if(isset($_POST['login'])){
     if(isset($_POST["username"]) && isset($_POST["password"])){
-        require_once("../config/config.php");
-        /**
-         * @var mysqli $conn
-         */
+
 
         $username = $_POST["username"];
         $password = $_POST["password"];
         $sql = "SELECT id, username, password FROM admin WHERE username=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
+        $db = new DatabaseClass("localhost", "root", "root", "newsapp");
+        $bind_params = ["s", $username];
+        $result = $db->select($sql, $bind_params);
 
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $conn->close();
-        // echo var_dump($row);
-
-
-
-
-        if($row == null){
+        if($result == null){
             session_regenerate_id();
             $msg = "You have entered wrong credentials";
-//             header("Location: login.php");
-        } else if($row["username"] == $username && password_verify($password, $row["password"])){
+        } else if($result[0]["username"] == $username && password_verify($password, $result[0]["password"])){
             session_regenerate_id();
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['username_id'] = $row['id'];
+            $_SESSION['username'] = $result[0]['username'];
+            $_SESSION['username_id'] = $result[0]['id'];
             session_write_close();
     
-            if($result->num_rows == 1 && $_SESSION['username'] == $row['username']){
+            if(!empty($result) && $_SESSION['username'] == $result[0]['username']){
                 header('Location: adminView.php');
             }
         }

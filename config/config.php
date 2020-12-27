@@ -1,16 +1,21 @@
 <?php
-// if(!isset($_SESSION['username'])){
-//     header("Location: ../admin/login.php");
-// }
+namespace config;
 
-    $host = "localhost";
-    $username="root";
-    $password="";
-    $db = "newsapp";
+class config{
 
-    $conn = new mysqli($host, $username, $password, $db);
+    private $host = "localhost";
+    private $username="root";
+    private $password="root";
+    private $db = "newsapp";
 
-    if($conn->connect_error){
-        die ("Connection failed: " . $conn->connect_error);
+
+    public function establishConnection(){
+        $conn = new mysqli($this->host, $this->username, $this->password, $this->db);
+        if($conn->connect_error){
+            die ("Connection failed: " . $conn->connect_error);
+        }
+        return $conn;
     }
+
+}
 ?>

@@ -15,6 +15,11 @@ CREATE TABLE category (
     category varchar(255)
 );
 
+INSERT INTO category (category) VALUES ("...");
+INSERT INTO category (category) VALUES ("Economy");
+INSERT INTO category (category) VALUES ("Politics");
+INSERT INTO category (category) VALUES ("History");
+
 CREATE TABLE news (
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title longtext,
