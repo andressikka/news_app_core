@@ -9,9 +9,6 @@ require_once(dirname(__FILE__)."/../DBQueries/DatabaseClass.php");
 
 use admin\DatabaseClass\DatabaseClass as DatabaseClass;
 
-/**
- * @var mysqli $conn
- */
 if(isset($_GET["id"])){
     $sql = "SELECT news.title, news.body, news.article_visibility, news.picture_visibility, news.categoryId, category.category
         FROM news INNER JOIN category ON news.categoryId=category.id 

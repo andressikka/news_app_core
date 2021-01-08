@@ -22,6 +22,16 @@ if(isset($_POST["delete_article"])){
     rmdir("upload/" . $id);
 
 }
+
+$filterArray = [];
+isset($_POST["cbPolitics"]) && $_POST["cbPolitics"] == "on" ? $filterArray["cbPolitics"] = true : $filterArray["cbPolitics"] = false;
+isset($_POST["cbEconomy"]) && $_POST["cbEconomy"] == "on" ? $filterArray["cbEconomy"] = true : $filterArray["cbEconomy"] = false;
+isset($_POST["cbHistory"]) && $_POST["cbHistory"] == "on" ? $filterArray["cbHistory"] = true : $filterArray["cbHistory"] = false;
+
+isset($_POST["ascDesc"]) && $_POST["ascDesc"] != "..." ? $filterArray["ascDesc"] = $_POST["ascDesc"] : $filterArray["ascDesc"] = false;
+
+
+
 $db = new DatabaseClass("localhost", "root", "root", "newsapp");
 $sql = "SELECT id, title, body, article_visibility, picture_visibility FROM news ORDER BY id DESC";
 $result = $db->select($sql);
@@ -33,32 +43,46 @@ $result = $db->select($sql);
 <body class="bg-light">
 <?php require_once("viewparts/nav.php");?>
 
-<div class="container ml-1">
-    <!-- TO DO add filters to article observation -->
-</div>
 
-<div class="container pt-5">
-    <?php foreach($result as $row){ ?>
-        <div class="row justify-content-center">
-            <div class="col-10 list-group-item"><h4><?= $row['title'] ?></h4></div>
-            <div class="col-1 list-group-item">
-                <form action="edit.php?mark=edit&id=<?= $row['id'] ?>" method="POST">
-                    <!-- <input type="hidden" name="mark" value="edit"> -->
-                    <input type="hidden" name="title" value="<?= $row['title'] ?>">
-                    <input type="hidden" name="body" value="<?= $row['body'] ?>">
-                    <input type="hidden" name="article_visibility" value="<?= $row['article_visibility'] ?>">
-                    <input type="hidden" name="picture_visibility" value="<?= $row['picture_visibility'] ?>">
-                    <input class="btn btn-primary" type="submit" value="Edit">
+<div class="container-fluid pt-5">
+    <div class="row p-3"> 
+        <form action="" class="col-2" method="POST">
+            <b>Categories:</b>
+            <input type="checkbox" name="cbPolitics"/> Politics &nbsp;
+            <input type="checkbox" name="cbEconomy"/> Economy &nbsp;
+            <input type="checkbox" name="cbHistory"/> History &nbsp;
+            <br>
+            
+            <b>Choose position:</b>
+            <select name="ascDesc">
+                <option name="ddlNone">...</option>
+                <option name="ddlAscending">Ascending</option>
+                <option name="ddlDescending">Descending</option>
 
-                </form>
-                <!-- <a class="btn btn-primary" href="edit.php?mark=edit&id=<?= $row['id'] ?>">Edit</a> -->
-            </div>
-            <div class="col-1 list-group-item">
-                <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
-                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                    <input class="btn btn-danger p-1" type="submit" name="delete_article" value="Delete">
-                </form>
-            </div>
+            </select>
+            <br>
+            <input type="submit" class="btn btn-primary" value="Filter">
+        </form>
+        <div class="col-9">
+            <?php foreach($result as $row){ ?>
+                <div class="row ">
+                    <div class="col-10 list-group-item"><h4><?= $row['title'] ?></h4></div>
+                    <div class="col-1 list-group-item">
+                        <form action="edit.php?mark=edit&id=<?= $row['id'] ?>" method="POST">
+                            <input class="btn btn-primary" type="submit" value="Edit">
+
+                        </form>
+                    </div>
+                    <div class="col-1 list-group-item">
+                        <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input class="btn btn-danger p-1" type="submit" name="delete_article" value="Delete">
+                        </form>
+                    </div>
+                </div>
+            <?php } ?>
         </div>
-    <?php } ?>
+    </div>
+    
+    
 </div>
